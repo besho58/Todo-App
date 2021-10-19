@@ -1,0 +1,409 @@
+/*
+### Primary
+
+- Bright Blue: hsl(220, 98%, 61%)
+- Check Background: linear-gradient hsl(192, 100%, 67%) to hsl(280, 87%, 65%)
+
+### Neutral
+
+### Light Theme
+
+- Very Light Gray: hsl(0, 0%, 98%) bg-2
+- Very Light Grayish Blue: hsl(236, 33%, 92%) bg-1
+- Light Grayish Blue: hsl(233, 11%, 84%) text-2 (checked)
+- Dark Grayish Blue: hsl(236, 9%, 61%) text-3
+- Very Dark Grayish Blue: hsl(235, 19%, 35%) text-1
+
+### Dark Theme
+
+- Very Dark Blue: hsl(235, 21%, 11%) bg 1
+- Very Dark Desaturated Blue: hsl(235, 24%, 19%) bg-2
+- Light Grayish Blue: hsl(234, 39%, 85%) text-1
+- Light Grayish Blue (hover): hsl(236, 33%, 92%) text-2 hover
+- Dark Grayish Blue: hsl(234, 11%, 52%) text-3
+- Very Dark Grayish Blue: hsl(233, 14%, 35%) text-2 (checked)
+- Very Dark Grayish Blue: hsl(237, 14%, 26%)
+
+
+*/
+:root {
+  /*primary colors*/
+  --clr-primary: hsl(220, 98%, 61%);
+  --grdn-primary:
+    linear-gradient( 
+      to right bottom,
+      hsl(192, 100%, 67%), 
+      hsl(280, 87%, 65%)
+    );
+  --white:#fff;
+  --black:#000;
+  /*light mode colors*/
+  --text-hover: hsl(235, 24%, 19%);
+  --text-1: hsl(235, 19%, 35%);
+  --text-3: hsl(236, 9%, 61%);
+  --text-2: hsl(233, 11%, 84%);
+  --bg-1: hsl(236, 33%, 92%);
+  --bg-2: hsl(0, 0%, 98%);
+  --shadow-1: 0 1rem 2rem rgba(0, 0, 0, 0.3);
+  --line-1:  0.1rem solid var(--text-2);
+  transition: color 0.2s;
+}
+
+:root[data-theme="dark"] {
+  /*dark mode colors*/
+  --bg-1: hsl(235, 21%, 11%);
+  --bg-2: hsl(237, 14%, 26%);
+  --text-2: hsl(233, 14%, 35%);
+  --text-3: hsl(234, 11%, 52%);
+  --text-1: hsl(234, 39%, 85%);
+  --text-hover: hsl(236, 33%, 92%);
+}
+
+/*******************************/
+/***********Mixins*************/
+/*************************************/
+* {
+  padding: 0;
+  margin: 0;
+}
+
+*,
+*::after,
+*::before {
+  box-sizing: inherit;
+}
+
+html {
+  font-size: 62.5%;
+}
+
+@media only screen and (max-width: 56.25em) {
+  html {
+    font-size: 50%;
+  }
+}
+
+body {
+  font-family: 'Josefin Sans', 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-size: 1.8rem;
+  color: var(--text-1);
+  min-height: 100vh;
+  background-color: var(--bg-1);
+  transition: all 0.2s;
+}
+
+.App {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bg {
+  position: fixed;
+  top: 0;
+  z-index: -10;
+}
+
+.bg__img {
+  height: 25rem;
+  overflow: hidden;
+}
+
+.bg__img img {
+  object-fit: contain;
+}
+
+.container {
+  margin-top: 6rem;
+  width: 40%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@media only screen and (max-width: 56.25em) {
+  .container {
+    width: 60%;
+  }
+}
+
+@media only screen and (max-width: 37.5em) {
+  .container {
+    width: 70%;
+  }
+}
+
+@media only screen and (max-width: 31.25em) {
+  .container {
+    width: 80%;
+  }
+}
+
+@media only screen and (max-width: 27.5em) {
+  .container {
+    width: 90%;
+  }
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header__title {
+  color: var(--white);
+  font-size: 3.2rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1rem;
+}
+
+.header__mode-icon {
+  height: 3.2rem;
+  width: 3.2rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.header__mode-icon:hover {
+  transform: scale(1.05) rotate(0);
+}
+
+.header__mode-icon:active {
+  transform: scale(0.95) rotate(50deg);
+}
+
+.search {
+  position: relative;
+  margin-top: 3rem;
+}
+
+.search__input {
+  width: 100%;
+  height: 6rem;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  padding: 1rem 5.8rem;
+  background-color: var(--bg-2);
+  border-radius: 0.5rem;
+  box-shadow: var(--shadow-1);
+  border: none;
+  appearance: none;
+  box-sizing: border-box;
+  position: relative;
+  transition: all 0.2s;
+  backface-visibility: hidden;
+}
+
+.search__input:focus {
+  outline: none;
+}
+
+.search::before {
+  content: "";
+  position: absolute;
+  top: 1.8rem;
+  left: 2rem;
+  z-index: 10;
+  height: 1.8rem;
+  width: 1.8rem;
+  border: var(--line-1);
+  border-radius: 100rem;
+}
+
+.todo {
+  width: 100%;
+  z-index: 2;
+  margin-top: 2rem;
+  background-color: var(--bg-2);
+  border-radius: 0.5rem;
+  box-shadow: var(--shadow-1);
+  overflow: hidden;
+  /****if completed****/
+}
+
+.todo__list {
+  list-style: none;
+}
+
+.todo__cross {
+  cursor: pointer;
+  margin-left: auto;
+  margin-right: 1.5rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s;
+  height: 1.8rem;
+  width: 1.8rem;
+}
+
+.todo__cross:hover {
+  transform: scale(0.97);
+}
+
+.todo__cross:active {
+  transform: scale(0.9);
+}
+
+.todo__item {
+  padding: 2rem 0;
+  border-bottom: var(--line-1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  justify-content: flex-start;
+}
+
+.todo__item:hover span {
+  background: var(--grdn-primary);
+}
+
+.todo__item:hover .todo__cross {
+  opacity: 1;
+  visibility: visible;
+}
+
+.todo__item:hover p,
+.todo__item:hover span {
+  transform: scale(0.98);
+}
+
+.todo__item p {
+  display: inline-block;
+  margin-left: 2rem;
+  transition: all 0.2s;
+  backface-visibility: hidden;
+}
+
+.todo__item span {
+  backface-visibility: hidden;
+  cursor: pointer;
+  margin-left: 2rem;
+  display: block;
+  position: relative;
+  height: 1.9rem;
+  width: 1.9rem;
+  z-index: 10;
+  background: var(--text-2);
+  border-radius: 100rem;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.todo__item span:active {
+  transform: scale(0.9);
+}
+
+.todo__item span::before {
+  content: "";
+  position: absolute;
+  height: 1.7rem;
+  width: 1.7rem;
+  border-radius: 100rem;
+  background: var(--bg-2);
+}
+
+.todo__check {
+  opacity: 0;
+  visibility: hidden;
+  z-index: 10;
+}
+
+.todo__item[data-status="completed"]:hover p,
+.todo__item[data-status="completed"]:hover span {
+  transform: scale(1);
+}
+
+.todo__item[data-status="completed"] p {
+  color: var(--text-2);
+  position: relative;
+}
+
+.todo__item[data-status="completed"] p::before {
+  position: absolute;
+  top: 50%;
+  content: "";
+  width: 100%;
+  height: 0.2rem;
+  background-color: currentColor;
+}
+
+.todo__item[data-status="completed"] span {
+  background: var(--grdn-primary);
+}
+
+.todo__item[data-status="completed"] span::before {
+  background: var(--grdn-primary);
+}
+
+.todo__item[data-status="completed"] .todo__check {
+  opacity: 1;
+  visibility: visible;
+}
+
+.todo__bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  justify-content: space-between;
+  font-size: 1.4rem;
+  color: var(--text-3);
+  padding: 2rem 1.5rem;
+  backface-visibility: hidden;
+}
+
+.todo__bar .cate-list {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.todo__bar .cate-list li {
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.todo__bar .cate-list li:not(:last-child) {
+  margin-right: 1rem;
+}
+
+.todo__bar .cate-list .selected {
+  color: var(--clr-primary);
+  font-weight: bold;
+}
+
+.todo__del-btn {
+  background-color: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: inherit;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.todo__del-btn:focus {
+  outline: none;
+}
+
+.todo__del-btn:hover, .todo__status li:hover {
+  color: var(--text-1);
+}
+
+.over {
+  background-color: var(--bg-1);
+}
+/*# sourceMappingURL=style.css.map */
