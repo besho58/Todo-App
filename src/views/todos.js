@@ -25,23 +25,23 @@ let dragStartIndex;
 const Todos = ({todos, deleteTodo, checkTodo, clearTodos, swapItems}) => {
   
   const dragStart = (e) => {
-    dragStartIndex = parseInt(e.target.closest('.todo__item').dataset.key);
+    dragStartIndex = e.target.closest('.todo__item').dataset.key;
   };
   const dragEnter = (e) => {
-    e.target.classList.add('over');
+    e.target.closest('.todo__item').classList.add('over');
   };
   const dragOver = (e) => {
     e.preventDefault();
   };
   const dragLeave = (e) => {
-    e.target.classList.remove('over');
+    e.target.closest('.todo__item').classList.remove('over');
   };
   const dragDrop = (e) => {
     e.target.classList.remove('over');
   
-    let dragEndIndex = parseInt(e.target.closest('.todo__item').dataset.key);
-    console.log(dragEndIndex);
-    // swapItems(dragStartIndex, dragEndIndex);
+    let dragEndIndex = e.target.closest('.todo__item').dataset.key;
+
+    swapItems(dragStartIndex, dragEndIndex);
   };
   
 
@@ -50,58 +50,60 @@ const Todos = ({todos, deleteTodo, checkTodo, clearTodos, swapItems}) => {
 
   const categorize = (e) => {
     let btn = e.target.closest('.cate-list li');
-    document.querySelectorAll('.cate-list li').forEach(cur => {cur.classList.remove('selected')})
-    btn.classList.toggle('selected');
-    category = btn.id;
+    if (btn) {
+      document.querySelectorAll('.cate-list li').forEach(cur => {cur.classList.remove('selected')})
+      btn.classList.toggle('selected');
+      category = btn.id;
+    }
 
     // Here we call the alternative function
     forceUpdate();
   }
 
   const todoList = todos.map((cur) => {
+    const markup = 
+      <li 
+        className="todo__item" 
+        key={cur.id} 
+        data-key={cur.id} 
+        data-status={cur.status} 
+        draggable 
+        onDragStart={dragStart}
+        onDragEnter={dragEnter}
+        onDragOver={dragOver}
+        onDragLeave={dragLeave}
+        onDrop={dragDrop}
+      >
+        <span className="todo__btn-check" onClick={checkTodo}>
+          <img className="todo__check" src="images/icon-check.svg" alt="check icon"/>
+        </span>
+        <p>{cur.content}</p> 
+        <img className="todo__cross" src="images/icon-cross.svg" onClick={()=>{deleteTodo(cur.id)}} alt="close icon" />
+      </li>;
+
     if (category === 'all') {
       return (
-        <li 
-          className="todo__item" 
-          key={cur.id} 
-          data-key={cur.id} 
-          data-status={cur.status} 
-          draggable 
-          onDragStart={dragStart}
-          onDragEnter={dragEnter}
-          onDragOver={dragOver}
-          onDragLeave={dragLeave}
-          onDrop={dragDrop}
-        >
-          <span className="todo__btn-check" onClick={checkTodo}>
-            <img className="todo__check" src="images/icon-check.svg" alt="check icon"/>
-          </span>
-          <p>{cur.content}</p> 
-          <img className="todo__cross" src="images/icon-cross.svg" onClick={()=>{deleteTodo(cur.id)}} alt="close icon" />
-        </li>
+        markup
       )
     } else if (cur.status === category) {
       return (
-        <li className="todo__item" key={cur.id} data-key={cur.id} data-status={cur.status}>
-          <span className="todo__btn-check" onClick={checkTodo}>
-            <img className="todo__check" src="images/icon-check.svg" alt="check icon"/>
-          </span>
-          <p>{cur.content}</p> 
-          <img className="todo__cross" src="images/icon-cross.svg" onClick={()=>{deleteTodo(cur.id)}} alt="close icon" />
-        </li>
+        markup
       )
     } else {
-      return null
+      return null;
     }
   });
-
+  const refineTodos = (array) => {
+    if (array.every((cur)=> {return cur === null})) {
+      
+      return <li className="todo__empty">Nothing's here ! <br />Try adding/completing some tasks you lazy duck 🦆</li>
+    } else {
+      return array;
+    }
+  }
   return (
-    <div className="todo">
-      <ul className="todo__list">
-        {todoList}
-      </ul>
-      <div className="todo__bar">
-        <div className="todo__counter"><p>{calcLeftTodos(todos)}  Todo(s) Left</p></div>
+    <div className="todo__box">
+      <div className="todo__bar todo__bar-box">
         <div className="todo__status">
           <ul className="cate-list" onClick={categorize}>
             <li className="selected" id="all" >All</li>
@@ -109,10 +111,21 @@ const Todos = ({todos, deleteTodo, checkTodo, clearTodos, swapItems}) => {
             <li id="completed">Completed</li>
           </ul>
         </div>
-        <div className="todo__del">
-          <button className="todo__del-btn" onClick={clearTodos} >Clear Completed</button>
-        </div>
+        
       </div>
+      <div className="todo">
+        <div className="todo__bar-box">
+          <div className="todo__counter"><p>{calcLeftTodos(todos)}  Todo(s) Left</p></div>
+
+          <div className="todo__del">
+            <button className="todo__del-btn" onClick={clearTodos} >Clear Completed</button>
+          </div>
+        </div>
+        <ul className="todo__list">
+          {refineTodos(todoList)}
+        </ul>
+      </div>
+        
     </div>
   )
 }

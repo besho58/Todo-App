@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {v4 as uuidv4} from 'uuid';
 import AddTodo from './containers/AddTodo';
 import Todos from './views/todos';
 
@@ -11,8 +12,8 @@ const readStorage = () => {
   } else {
     return {
       todos: [
-        {content: 'Type what you want to do and hit Enter', status: 'active', id: 0, order : 1},
-        {content: 'Click the circle to check the task', status: 'completed', id: 1, order: 0}
+        {content: 'Type what you want to do and hit Enter', status: 'active', id: uuidv4()},
+        {content: 'Click the circle to check the task', status: 'completed', id: uuidv4()}
       ]
     }  
   }
@@ -23,11 +24,7 @@ class App extends Component {
   state = readStorage();
 
   addTodo = (todo) => {
-    if (this.state.todos.length > 0){
-      todo.id = this.state.todos[this.state.todos.length - 1].id + 1;
-    } else {
-      todo.id = 0;
-    }
+    todo.id = uuidv4();
     todo.status = 'active';
     const todos = [...this.state.todos, todo];
     this.setState({
@@ -39,6 +36,7 @@ class App extends Component {
   }
 
   deleteTodo = (id) => {
+    
     let todos = this.state.todos.filter( cur =>{
       return cur.id !== id;
     });
@@ -50,7 +48,7 @@ class App extends Component {
 
   checkTodo = (e) => {
     const btn = e.target.closest('.todo__btn-check');
-    let key = parseInt(btn.parentNode.dataset.key);
+    let key = btn.parentNode.dataset.key;
     let todos = this.state.todos;
     // remember NEVER CHANGE THE STATE DIRECTLY .. BETTER STORE IT IN A VARIABLE THEN ASSIGN IT TO THE STATE
 
@@ -102,17 +100,44 @@ class App extends Component {
   }
 
   swapItems = (fromIndex, toIndex) => {
-    const todos = this.state.todos;
-    const itemOne = todos.findIndex(cur => {
-      return cur.id === fromIndex;
+    const immutableMove = (arr, from, to) => {
+      return arr.reduce((prev, current, idx, self) => {
+        if (from === to) {
+          prev.push(current);
+          console.log('from===to');
+        }
+        if (idx === from) {
+          console.log('idx===from');
+          return prev;
+        }
+        if (from < to) {
+          prev.push(current);
+          console.log('from<to');
+        }
+        if (idx === to) {
+          prev.push(self[from]);
+          console.log('idx===to');
+        }
+        if (from > to) {
+          prev.push(current);
+          console.log('from>to');
+        }
+        
+        console.log('not this');
+        return prev;
+      }, []);
+    }
+    const findItem  = (key) => todos.findIndex(cur => cur.id === key);
+    const todos = this.state.todos; // at least i tried
+    // const itemOne = todos[findItem(fromIndex)];
+    // // const itemTwo = todos[findItem(toIndex)];
+    // // todos[findItem(fromIndex)] = todos[findItem(toIndex)];
+    // // todos[findItem(toIndex)] = itemOne;
+    // // itemOne = todos.splice(findItem(toIndex), 1, itemOne)[0];
+    // console.log(immutableMove(todos, findItem(fromIndex), findItem(toIndex)), itemOne);
+    this.setState({
+      todos: immutableMove(todos, findItem(fromIndex), findItem(toIndex))
     });
-    const itemTwo = todos.findIndex(cur => {
-      return cur.id === toIndex;
-    });
-    todos[itemOne] = this.state.todos[itemTwo];
-    todos[itemTwo] = this.state.todos[itemOne];
-
-    console.log(todos, itemOne, itemTwo);
   }
 
   render() {
@@ -125,7 +150,7 @@ class App extends Component {
           </div>
         </div>
 
-        <main className="container">
+        <main className="container width-ctrl">
           <div className="header">
             <h1 className="header__title">Todos</h1>
             <div className="header__icon-box" onClick={this.toggleMode}>

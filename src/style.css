@@ -40,11 +40,12 @@
   /*light mode colors*/
   --text-hover: hsl(235, 24%, 19%);
   --text-1: hsl(235, 19%, 35%);
-  --text-3: hsl(236, 9%, 61%);
+  --text-3: hsl(236, 9%, 50%);
   --text-2: hsl(233, 11%, 84%);
   --bg-1: hsl(236, 33%, 92%);
   --bg-2: hsl(0, 0%, 98%);
-  --shadow-1: 0 1rem 2rem rgba(0, 0, 0, 0.3);
+  --shadow-1: 0 1rem 2rem rgba(0, 0, 0, 0.2);
+  --shadow-2: 0 1rem 2rem rgba(0, 0, 0, 0.3);
   --line-1:  0.1rem solid var(--text-2);
   transition: color 0.2s;
 }
@@ -54,7 +55,7 @@
   --bg-1: hsl(235, 21%, 11%);
   --bg-2: hsl(237, 14%, 26%);
   --text-2: hsl(233, 14%, 35%);
-  --text-3: hsl(234, 11%, 52%);
+  --text-3: hsl(234, 11%, 60%);
   --text-1: hsl(234, 39%, 85%);
   --text-hover: hsl(236, 33%, 92%);
 }
@@ -117,37 +118,40 @@ body {
   object-fit: contain;
 }
 
-.container {
-  margin-top: 6rem;
-  width: 40%;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+.width-ctrl {
+  /* this is not the best way.. i just wanted the box bar to the same width of the container*/
+  width: 50%;
 }
 
 @media only screen and (max-width: 56.25em) {
-  .container {
+  .width-ctrl {
     width: 60%;
   }
 }
 
 @media only screen and (max-width: 37.5em) {
-  .container {
+  .width-ctrl {
     width: 70%;
   }
 }
 
 @media only screen and (max-width: 31.25em) {
-  .container {
+  .width-ctrl {
     width: 80%;
   }
 }
 
 @media only screen and (max-width: 27.5em) {
-  .container {
+  .width-ctrl {
     width: 90%;
   }
+}
+
+.container {
+  margin-top: 6rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .header {
@@ -223,15 +227,25 @@ body {
   width: 100%;
   z-index: 2;
   margin-top: 2rem;
-  background-color: var(--bg-2);
   border-radius: 0.5rem;
   box-shadow: var(--shadow-1);
   overflow: hidden;
   /****if completed****/
 }
 
+.todo__box {
+  position: relative;
+}
+
 .todo__list {
   list-style: none;
+}
+
+.todo__empty {
+  padding: 1rem 2rem;
+  font-size: 1.4rem;
+  color: var(--text-3);
+  text-align: center;
 }
 
 .todo__cross {
@@ -255,11 +269,15 @@ body {
 
 .todo__item {
   padding: 2rem 0;
-  border-bottom: var(--line-1);
+  background-color: var(--bg-2);
   display: flex;
   align-items: center;
   justify-content: center;
   justify-content: flex-start;
+}
+
+.todo__item:not(:last-child) {
+  border-bottom: var(--line-1);
 }
 
 .todo__item:hover span {
@@ -291,7 +309,7 @@ body {
   position: relative;
   height: 1.9rem;
   width: 1.9rem;
-  z-index: 10;
+  z-index: 9;
   background: var(--text-2);
   border-radius: 100rem;
   transition: all 0.2s;
@@ -351,29 +369,66 @@ body {
   visibility: visible;
 }
 
-.todo__bar {
+.todo__bar-box {
+  position: relative;
+  background: var(--bg-2);
+  border-radius: 0.5rem;
+  font-size: 1.4rem;
+  padding: 2rem 1.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
   justify-content: space-between;
-  font-size: 1.4rem;
+  z-index: 10;
+}
+
+.todo__bar {
+  box-shadow: var(--shadow-1);
+  margin-top: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  justify-content: space-between;
   color: var(--text-3);
-  padding: 2rem 1.5rem;
   backface-visibility: hidden;
 }
 
 .todo__bar .cate-list {
-  padding: 0;
+  padding: 0 0;
   margin: 0;
   list-style: none;
+  flex-basis: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+  justify-content: space-around;
 }
 
 .todo__bar .cate-list li {
-  transition: all 0.2s;
+  transition: color 0.2s;
   cursor: pointer;
+  font-weight: bold;
+  display: inline-block;
+  padding: 0.7rem 2rem;
+  position: relative;
+  z-index: 10;
+}
+
+.todo__bar .cate-list li::before {
+  display: block;
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 0.5rem;
+  background: var(--grdn-primary);
+  opacity: 0.9;
+  z-index: -1;
+  transform: scale(0);
+  transform-origin: bottom;
+  transition: transform 0.2s ease-out;
 }
 
 .todo__bar .cate-list li:not(:last-child) {
@@ -381,8 +436,16 @@ body {
 }
 
 .todo__bar .cate-list .selected {
-  color: var(--clr-primary);
-  font-weight: bold;
+  color: var(--white);
+}
+
+.todo__bar .cate-list .selected::before {
+  transform: scale(1);
+  transition: transform 0.3s cubic-bezier(0.13, 1.61, 0.58, 1);
+}
+
+.todo__status {
+  flex-basis: 100%;
 }
 
 .todo__del-btn {
